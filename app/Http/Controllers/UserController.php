@@ -11,6 +11,9 @@ use App\Http\Controllers\ItemController;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Item;
+use App\Models\Community;
+use App\Models\Resource;
+use App\Models\Tree;
 use App\Models\Qrcode;
 use Validator;
 use Carbon\Carbon;
@@ -60,6 +63,130 @@ class UserController extends Controller
         }
     }
 
+    public function createtree(Request $request)
+    {
+            $profile = new Tree();
+            $fav = Str::random(8);
+            $profile->description = $request->description;
+            $profile->website = $request->website;
+            $profile->identifier = $request->identifier;
+            $profile->code = $fav;
+            if($request->hasFile('image')) {
+                if($request->file('image')->getClientOriginalExtension() == 'jpg' || $request->file('image')->getClientOriginalExtension() == 'png' || $request->file('image')->getClientOriginalExtension() == 'gif' || $request->file('image')->getClientOriginalExtension() == 'webp') {
+                $image = $request->file('image');
+                $filename = time() . '_ulltree.jpg';
+                $location = 'images/treelink/' . $filename;
+                Image::make($image)->resize(800, 800)->save($location);
+                $profile->image = $filename;
+                }}
+                $profile->save();
+            for($i=1;$i<=$request->resnum;$i++) {
+                if($i == 1) {
+                    $res = new Resource();
+                    $res->name = $request->resname_1;
+                    $res->link = $request->reslink_1;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 2) {
+                    $res = new Resource();
+                    $res->name = $request->resname_2;
+                    $res->link = $request->reslink_2;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 3) {
+                    $res = new Resource();
+                    $res->name = $request->resname_3;
+                    $res->link = $request->reslink_3;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 4) {
+                    $res = new Resource();
+                    $res->name = $request->resname_4;
+                    $res->link = $request->reslink_4;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 5) {
+                    $res = new Resource();
+                    $res->name = $request->resname_5;
+                    $res->link = $request->reslink_5;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 6) {
+                    $res = new Resource();
+                    $res->name = $request->resname_6;
+                    $res->link = $request->reslink_6;
+                    $res->code = $fav;
+                    $res->save();
+                }
+            }
+              
+            for($i=1;$i<=$request->comnum;$i++) {
+                if($i == 1) {
+                    $res = new Community();
+                    $res->name = $request->comname_1;
+                    $res->link = $request->comlink_1;
+                    $res->desc = $request->comdes_1;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 2) {
+                    $res = new Community();
+                    $res->name = $request->comname_2;
+                    $res->link = $request->comlink_2;
+                    $res->desc = $request->comdes_2;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 3) {
+                    $res = new Community();
+                    $res->name = $request->comname_3;
+                    $res->link = $request->comlink_3;
+                    $res->desc = $request->comdes_3;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 4) {
+                    $res = new Community();
+                    $res->name = $request->comname_4;
+                    $res->link = $request->comlink_4;
+                    $res->desc = $request->comdes_4;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 5) {
+                    $res = new Community();
+                    $res->name = $request->comname_5;
+                    $res->link = $request->comlink_5;
+                    $res->desc = $request->comdes_5;
+                    $res->code = $fav;
+                    $res->save();
+                }
+                elseif($i == 6) {
+                    $res = new Community();
+                    $res->name = $request->comname_6;
+                    $res->link = $request->comlink_6;
+                    $res->desc = $request->comdes_6;
+                    $res->code = $fav;
+                    $res->save();
+                }
+            }
+            //return back()->with('success', 'Link Generated!');
+            /*return response()->json([
+                'status' => 'success',
+                'identifier' => $data
+            ]);*/
+            $data['tree'] = Tree::whereidentifier($request->identifier)->first();
+            $data['resource'] = Resource::wherecode($fav)->get();
+            $data['community'] = Community::wherecode($fav)->get();
+             return view('/front/viewtree', $data);
+        
+    }
+
     public function createqrcode(Request $request)
     {
         
@@ -93,7 +220,7 @@ class UserController extends Controller
                 if ($img) {
                     $link = new Qrcode();
                     $link->info = $data;
-                    $link->qrcode = $img;
+                    $link->qrcode = base64_encode($img);
                     $link->save();
                 if ($filename) {
                 if (!preg_match("#\.png$#i", $filename)) {
@@ -137,6 +264,25 @@ class UserController extends Controller
         }
 
     }
+
+    public function checktree(Request $request)
+    {
+        $check = Tree::whereidentifier($request->identifier)->count();
+        if($check>0) {
+            $res = array([
+                'status' => 'Error'
+            ]);
+            return $res;
+        }
+        else {
+            $res = array([
+                'status' => 'Success'
+            ]);
+            //$pi = json_decode($res, true);
+            return $res;
+        }
+
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -163,6 +309,20 @@ class UserController extends Controller
         else {
             $des = Item::whereidentifier($id)->first();
              return redirect()->away($des->url);
+        }
+    }
+
+    public function viewtree($id)
+    {
+        $check = Tree::whereidentifier($id)->count();
+        if($check<1) {
+            return back()->with('alert', 'Invalid Link');
+        }
+        else {
+            $data['tree'] =$tree = Tree::whereidentifier($id)->first();
+            $data['resource'] = Resource::wherecode($tree->code)->get();
+            $data['community'] = Community::wherecode($tree->code)->get();
+             return view('/front/viewtree', $data);
         }
     }
 

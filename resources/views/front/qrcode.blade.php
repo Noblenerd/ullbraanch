@@ -62,7 +62,7 @@
                         </div>
                         <div class="form-group url">
                             <div class="input-group">
-                                <input type="url" name="url" class="form-control" placeholder="Enter your full URL">
+                                <input type="text" name="url" class="form-control" placeholder="Enter your full URL">
                             </div>
                         </div>
                         <div class="form-group text">

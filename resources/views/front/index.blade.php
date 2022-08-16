@@ -50,14 +50,14 @@
                         @csrf
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="url" name="url" class="form-control" placeholder="Enter your full URL">
+                                <input type="text" name="url" class="form-control" placeholder="Enter your full URL">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="input-group">
                                 <input type="text" name="identifier" class="form-control" onchange="check(this.value)" onkeyup="check(this.value)" placeholder="Enter your Unique Identifier">
                             </div>
-                            <span class="identity"></span>
+                            <span class="identity"><i>E.g. braan.ch/identifier</i></span>
                         </div>
                         <button class="btn btn-success rounded form-control generate" type="submit" name=""> Generate Link </button>
                     </form>
@@ -164,7 +164,7 @@
             function(data) {
                 console.log(data);
                 if(data[0]['status'] == 'Success') {
-                    $('.identity').html('<i class="text-success">Approved</i>');
+                    $('.identity').html('<i class="text-success"> <i>braan.ch/'+iden+' </i> - Approved</i>');
                     $('.generate').show();
                  }
                  else {
